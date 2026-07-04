@@ -35,6 +35,7 @@ function HomePage() {
   const [courses, setCourses] = useState<Course[]>([]);
   const [loadingCourses, setLoadingCourses] = useState(true);
   const [selectedLevel, setSelectedLevel] = useState("");
+  const [selectedSubject, setSelectedSubject] = useState("");
   useEffect(() => {
     if (!supabase) return;
     supabase
@@ -48,14 +49,16 @@ function HomePage() {
         setLoadingCourses(false);
       });
   }, []);
-  const visibleCourses = selectedLevel
-    ? courses.filter((course) =>
+  const visibleCourses = courses
+    .filter((course) => !selectedSubject || course.subject === selectedSubject)
+    .filter((course) => {
+      if (!selectedLevel) return true;
+      const levels =
         (course.course_target_levels?.length
           ? course.course_target_levels
-          : (course.level?.split(",").map((level) => level.trim()) ?? [])
-        ).includes(selectedLevel),
-      )
-    : courses;
+          : course.level?.split(",").map((level) => level.trim())) ?? [];
+      return levels.includes(selectedLevel);
+    });
   return (
     <div className="min-h-screen overflow-hidden bg-background">
       <SiteNav />
@@ -124,6 +127,10 @@ function HomePage() {
                 subject="Chemistry"
                 quote="Be positive, understand the concepts, and prepare to ace Chemistry."
                 accent="chemistry"
+                onExplore={() => {
+                  setSelectedSubject("Chemistry");
+                  document.querySelector("#courses")?.scrollIntoView({ behavior: "smooth" });
+                }}
               />
               <FacultyCard
                 image="/sir-hamiz-javed.jpeg"
@@ -131,6 +138,10 @@ function HomePage() {
                 subject="Physics"
                 quote="Understand principles instead of memorizing formulas."
                 accent="physics"
+                onExplore={() => {
+                  setSelectedSubject("Physics");
+                  document.querySelector("#courses")?.scrollIntoView({ behavior: "smooth" });
+                }}
               />
             </div>
           </div>
@@ -165,6 +176,20 @@ function HomePage() {
               Available courses
             </p>
             <h2 className="mt-3 text-4xl font-extrabold">Choose your course</h2>
+            {selectedSubject && (
+              <div className="mt-5 flex items-center gap-3">
+                <span className="rounded-full bg-primary/10 px-4 py-2 text-sm font-bold text-primary">
+                  {selectedSubject} courses
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setSelectedSubject("")}
+                  className="text-sm font-bold text-muted-foreground hover:text-foreground"
+                >
+                  Show all subjects
+                </button>
+              </div>
+            )}
             {loadingCourses ? (
               <p className="mt-8 text-muted-foreground">Loading courses…</p>
             ) : visibleCourses.length === 0 ? (
@@ -263,12 +288,14 @@ function FacultyCard({
   subject,
   quote,
   accent,
+  onExplore,
 }: {
   image: string;
   name: string;
   subject: string;
   quote: string;
   accent: "chemistry" | "physics";
+  onExplore: () => void;
 }) {
   return (
     <article className="group overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-elegant">
@@ -291,9 +318,13 @@ function FacultyCard({
           </span>
           <h3 className="mt-5 text-3xl font-extrabold">{name}</h3>
           <p className="mt-4 text-lg leading-8 text-sidebar-foreground/75">“{quote}”</p>
-          <a href="#courses" className="mt-7 inline-flex items-center gap-2 font-bold text-gold">
+          <button
+            type="button"
+            onClick={onExplore}
+            className="mt-7 inline-flex items-center gap-2 font-bold text-gold"
+          >
             Explore {subject} courses <ArrowRight className="h-4 w-4" />
-          </a>
+          </button>
         </div>
       </div>
     </article>
