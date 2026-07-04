@@ -59,7 +59,7 @@ function StudentDashboard() {
 
   useEffect(() => {
     async function load() {
-      if (!supabase || !profile) return;
+      if (!supabase || !profile || profile.role !== "student" || !profile.academic_level) return;
       const today = new Date().toISOString().slice(0, 10);
       const results = await Promise.all([
         supabase

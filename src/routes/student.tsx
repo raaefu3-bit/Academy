@@ -9,8 +9,8 @@ export const Route = createFileRoute("/student")({
 function StudentLayout() {
   const { profile } = useAuth();
   return (
-    <RequireRole allow={["student", "admin", "super_admin"]}>
-      {profile?.role === "student" && !profile.academic_level ? (
+    <RequireRole allow={["student"]}>
+      {!profile?.academic_level ? (
         <Navigate to="/onboarding" />
       ) : (
         <Outlet />
