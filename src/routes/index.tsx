@@ -91,6 +91,41 @@ function HomePage() {
             </div>
           </div>
         </section>
+        <section
+          id="faculty"
+          className="relative scroll-mt-24 overflow-hidden bg-sidebar px-6 py-20 text-sidebar-foreground"
+        >
+          <div className="pointer-events-none absolute -left-24 top-10 h-72 w-72 rounded-full bg-blue-500/15 blur-3xl" />
+          <div className="pointer-events-none absolute -right-24 bottom-0 h-72 w-72 rounded-full bg-gold/15 blur-3xl" />
+          <div className="relative mx-auto max-w-7xl">
+            <div className="mx-auto max-w-2xl text-center">
+              <p className="text-sm font-bold uppercase tracking-[0.2em] text-gold">Our faculty</p>
+              <h2 className="mt-3 text-4xl font-extrabold sm:text-5xl">
+                Learn from subject specialists.
+              </h2>
+              <p className="mt-4 leading-7 text-sidebar-foreground/70">
+                Clear teaching, structured exam preparation, and dedicated course spaces for
+                Chemistry and Physics.
+              </p>
+            </div>
+            <div className="mt-12 grid gap-6 lg:grid-cols-2">
+              <FacultyCard
+                image="/sir-hashim-ali.jpeg"
+                name="Sir Hashim Ali"
+                subject="Chemistry"
+                quote="Be positive, understand the concepts, and prepare to ace Chemistry."
+                accent="chemistry"
+              />
+              <FacultyCard
+                image="/sir-hamiz-javed.jpeg"
+                name="Sir Hamiz Javed"
+                subject="Physics"
+                quote="Understand principles instead of memorizing formulas."
+                accent="physics"
+              />
+            </div>
+          </div>
+        </section>
         <section id="courses" className="scroll-mt-24 px-6 py-20">
           <div className="mx-auto max-w-7xl">
             <p className="text-sm font-bold uppercase tracking-wider text-primary">
@@ -186,5 +221,48 @@ function HomePage() {
       </main>
       <SiteFooter />
     </div>
+  );
+}
+
+function FacultyCard({
+  image,
+  name,
+  subject,
+  quote,
+  accent,
+}: {
+  image: string;
+  name: string;
+  subject: string;
+  quote: string;
+  accent: "chemistry" | "physics";
+}) {
+  return (
+    <article className="group overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-elegant">
+      <div className="grid min-h-[440px] sm:grid-cols-[1.05fr_.95fr]">
+        <div className="relative min-h-[320px] overflow-hidden">
+          <img
+            src={image}
+            alt={`${name}, ${subject} teacher at TeachINK Academy`}
+            className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-[1.03]"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-sidebar via-transparent to-transparent sm:bg-gradient-to-r sm:from-transparent sm:to-sidebar/80" />
+        </div>
+        <div className="relative flex flex-col justify-center p-7 sm:-ml-6 sm:p-8">
+          <span
+            className={`w-fit rounded-full px-3 py-1 text-xs font-extrabold uppercase tracking-wider ${
+              accent === "chemistry" ? "bg-sky-400/15 text-sky-200" : "bg-gold/15 text-gold"
+            }`}
+          >
+            {subject}
+          </span>
+          <h3 className="mt-5 text-3xl font-extrabold">{name}</h3>
+          <p className="mt-4 text-lg leading-8 text-sidebar-foreground/75">“{quote}”</p>
+          <a href="#courses" className="mt-7 inline-flex items-center gap-2 font-bold text-gold">
+            Explore {subject} courses <ArrowRight className="h-4 w-4" />
+          </a>
+        </div>
+      </div>
+    </article>
   );
 }
