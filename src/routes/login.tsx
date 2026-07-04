@@ -25,7 +25,7 @@ function friendlyAuthError(error: unknown) {
 
 function destinationFor(role: string) {
   if (role === "student") return "/student";
-  if (role === "teacher") return "/admin";
+  if (role === "teacher") return "/teacher";
   return "/admin";
 }
 
