@@ -60,6 +60,13 @@ function TeacherDashboard() {
 
   const subjects = [...new Set(courses.map((course) => course.subject))].join(" & ");
   const teacherTitle = `${profile?.full_name || "Teacher"}${subjects ? ` — ${subjects} Panel` : ""}`;
+  const isChemistry = subjects.toLowerCase().includes("chemistry");
+  const isPhysics = subjects.toLowerCase().includes("physics");
+  const portrait = isChemistry
+    ? "/sir-hashim-ali.jpeg"
+    : isPhysics
+      ? "/sir-hamiz-javed.jpeg"
+      : null;
 
   return (
     <DashboardShell
@@ -68,6 +75,34 @@ function TeacherDashboard() {
       title={teacherTitle}
       subtitle="Your assigned courses and teaching activity."
     >
+      <section
+        className={`relative mb-7 overflow-hidden rounded-3xl p-7 text-white shadow-elegant sm:p-9 ${
+          isChemistry
+            ? "bg-gradient-to-br from-sky-950 via-blue-900 to-cyan-700"
+            : isPhysics
+              ? "bg-gradient-to-br from-slate-950 via-indigo-950 to-amber-700"
+              : "gradient-primary"
+        }`}
+      >
+        <div className="relative z-10 max-w-2xl">
+          <p className="text-xs font-bold uppercase tracking-[.2em] text-white/65">
+            Personal teacher panel
+          </p>
+          <h2 className="mt-3 text-3xl font-extrabold sm:text-4xl">{teacherTitle}</h2>
+          <p className="mt-3 max-w-xl leading-7 text-white/75">
+            Manage only your assigned {subjects || "academy"} courses, students, classes, and
+            learning material.
+          </p>
+        </div>
+        {portrait && (
+          <img
+            src={portrait}
+            alt=""
+            className="absolute inset-y-0 right-0 hidden h-full w-72 object-cover opacity-35 [mask-image:linear-gradient(to_left,black,transparent)] md:block"
+          />
+        )}
+        <div className="pointer-events-none absolute -bottom-24 left-1/3 h-52 w-52 rounded-full bg-white/10 blur-3xl" />
+      </section>
       <PageHeader
         eyebrow="Teacher workspace"
         title="Your courses, one focused workspace"

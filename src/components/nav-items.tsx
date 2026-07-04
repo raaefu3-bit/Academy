@@ -30,10 +30,12 @@ export const studentNav: NavItem[] = [
 
 export const teacherNav: NavItem[] = [
   { to: "/teacher", label: "Dashboard", icon: <LayoutDashboard className="h-4 w-4" /> },
+  { to: "/teacher", label: "My Courses", icon: <BookOpen className="h-4 w-4" /> },
   { to: "/teacher/live-classes", label: "Live Classes", icon: <Video className="h-4 w-4" /> },
   { to: "/teacher/notes", label: "Resources", icon: <FileText className="h-4 w-4" /> },
   { to: "/teacher/announcements", label: "Announcements", icon: <Megaphone className="h-4 w-4" /> },
   { to: "/teacher/assignments", label: "Assignments", icon: <ClipboardList className="h-4 w-4" /> },
+  { to: "/teacher/tests", label: "Tests", icon: <GraduationCap className="h-4 w-4" /> },
 ];
 
 export const adminNav: NavItem[] = [
