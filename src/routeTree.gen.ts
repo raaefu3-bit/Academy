@@ -45,6 +45,7 @@ import { Route as AdminPaymentsRouteImport } from './routes/admin.payments'
 import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
 import { Route as AdminLiveClassesRouteImport } from './routes/admin.live-classes'
 import { Route as AdminCoursesRouteImport } from './routes/admin.courses'
+import { Route as AdminConnectedAccountsRouteImport } from './routes/admin.connected-accounts'
 import { Route as AdminAssignmentsRouteImport } from './routes/admin.assignments'
 import { Route as AdminAnnouncementsRouteImport } from './routes/admin.announcements'
 import { Route as AdminAccessRequestsRouteImport } from './routes/admin.access-requests'
@@ -232,6 +233,11 @@ const AdminCoursesRoute = AdminCoursesRouteImport.update({
   path: '/courses',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminConnectedAccountsRoute = AdminConnectedAccountsRouteImport.update({
+  id: '/connected-accounts',
+  path: '/connected-accounts',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminAssignmentsRoute = AdminAssignmentsRouteImport.update({
   id: '/assignments',
   path: '/assignments',
@@ -284,6 +290,7 @@ export interface FileRoutesByFullPath {
   '/admin/access-requests': typeof AdminAccessRequestsRoute
   '/admin/announcements': typeof AdminAnnouncementsRoute
   '/admin/assignments': typeof AdminAssignmentsRoute
+  '/admin/connected-accounts': typeof AdminConnectedAccountsRoute
   '/admin/courses': typeof AdminCoursesRoute
   '/admin/live-classes': typeof AdminLiveClassesRoute
   '/admin/orders': typeof AdminOrdersRoute
@@ -324,6 +331,7 @@ export interface FileRoutesByTo {
   '/admin/access-requests': typeof AdminAccessRequestsRoute
   '/admin/announcements': typeof AdminAnnouncementsRoute
   '/admin/assignments': typeof AdminAssignmentsRoute
+  '/admin/connected-accounts': typeof AdminConnectedAccountsRoute
   '/admin/courses': typeof AdminCoursesRoute
   '/admin/live-classes': typeof AdminLiveClassesRoute
   '/admin/orders': typeof AdminOrdersRoute
@@ -369,6 +377,7 @@ export interface FileRoutesById {
   '/admin/access-requests': typeof AdminAccessRequestsRoute
   '/admin/announcements': typeof AdminAnnouncementsRoute
   '/admin/assignments': typeof AdminAssignmentsRoute
+  '/admin/connected-accounts': typeof AdminConnectedAccountsRoute
   '/admin/courses': typeof AdminCoursesRoute
   '/admin/live-classes': typeof AdminLiveClassesRoute
   '/admin/orders': typeof AdminOrdersRoute
@@ -415,6 +424,7 @@ export interface FileRouteTypes {
     | '/admin/access-requests'
     | '/admin/announcements'
     | '/admin/assignments'
+    | '/admin/connected-accounts'
     | '/admin/courses'
     | '/admin/live-classes'
     | '/admin/orders'
@@ -455,6 +465,7 @@ export interface FileRouteTypes {
     | '/admin/access-requests'
     | '/admin/announcements'
     | '/admin/assignments'
+    | '/admin/connected-accounts'
     | '/admin/courses'
     | '/admin/live-classes'
     | '/admin/orders'
@@ -499,6 +510,7 @@ export interface FileRouteTypes {
     | '/admin/access-requests'
     | '/admin/announcements'
     | '/admin/assignments'
+    | '/admin/connected-accounts'
     | '/admin/courses'
     | '/admin/live-classes'
     | '/admin/orders'
@@ -796,6 +808,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCoursesRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/connected-accounts': {
+      id: '/admin/connected-accounts'
+      path: '/connected-accounts'
+      fullPath: '/admin/connected-accounts'
+      preLoaderRoute: typeof AdminConnectedAccountsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/assignments': {
       id: '/admin/assignments'
       path: '/assignments'
@@ -846,6 +865,7 @@ interface AdminRouteChildren {
   AdminAccessRequestsRoute: typeof AdminAccessRequestsRoute
   AdminAnnouncementsRoute: typeof AdminAnnouncementsRoute
   AdminAssignmentsRoute: typeof AdminAssignmentsRoute
+  AdminConnectedAccountsRoute: typeof AdminConnectedAccountsRoute
   AdminCoursesRoute: typeof AdminCoursesRoute
   AdminLiveClassesRoute: typeof AdminLiveClassesRoute
   AdminOrdersRoute: typeof AdminOrdersRoute
@@ -863,6 +883,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminAccessRequestsRoute: AdminAccessRequestsRoute,
   AdminAnnouncementsRoute: AdminAnnouncementsRoute,
   AdminAssignmentsRoute: AdminAssignmentsRoute,
+  AdminConnectedAccountsRoute: AdminConnectedAccountsRoute,
   AdminCoursesRoute: AdminCoursesRoute,
   AdminLiveClassesRoute: AdminLiveClassesRoute,
   AdminOrdersRoute: AdminOrdersRoute,

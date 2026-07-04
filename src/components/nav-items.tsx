@@ -11,6 +11,7 @@ import {
   FlaskConical,
   Atom,
   Users,
+  PlugZap,
 } from "lucide-react";
 import type { NavItem } from "./DashboardShell";
 
@@ -43,6 +44,11 @@ export const adminNav: NavItem[] = [
   { to: "/admin/announcements", label: "Announcements", icon: <Megaphone className="h-4 w-4" /> },
   { to: "/admin/assignments", label: "Assignments", icon: <ClipboardList className="h-4 w-4" /> },
   { to: "/admin/tests", label: "Tests", icon: <GraduationCap className="h-4 w-4" /> },
+  {
+    to: "/admin/connected-accounts",
+    label: "Connected Accounts",
+    icon: <PlugZap className="h-4 w-4" />,
+  },
   { to: "/admin/orders", label: "Payments", icon: <ClipboardList className="h-4 w-4" /> },
   { to: "/admin/students", label: "Students", icon: <User className="h-4 w-4" /> },
   { to: "/admin/users", label: "Users & Roles", icon: <Users className="h-4 w-4" /> },
@@ -57,6 +63,11 @@ export const teacherManagementNav: NavItem[] = [
   { to: "/admin/announcements", label: "Announcements", icon: <Megaphone className="h-4 w-4" /> },
   { to: "/admin/assignments", label: "Assignments", icon: <ClipboardList className="h-4 w-4" /> },
   { to: "/admin/tests", label: "Tests", icon: <GraduationCap className="h-4 w-4" /> },
+  {
+    to: "/admin/connected-accounts",
+    label: "Connected Accounts",
+    icon: <PlugZap className="h-4 w-4" />,
+  },
 ];
 
 export { Atom };
