@@ -34,6 +34,7 @@ const features = [
 function HomePage() {
   const [courses, setCourses] = useState<Course[]>([]);
   const [loadingCourses, setLoadingCourses] = useState(true);
+  const [selectedLevel, setSelectedLevel] = useState("");
   useEffect(() => {
     if (!supabase) return;
     supabase
@@ -47,6 +48,14 @@ function HomePage() {
         setLoadingCourses(false);
       });
   }, []);
+  const visibleCourses = selectedLevel
+    ? courses.filter((course) =>
+        (course.course_target_levels?.length
+          ? course.course_target_levels
+          : (course.level?.split(",").map((level) => level.trim()) ?? [])
+        ).includes(selectedLevel),
+      )
+    : courses;
   return (
     <div className="min-h-screen overflow-hidden bg-background">
       <SiteNav />
@@ -62,8 +71,8 @@ function HomePage() {
                 Learn with clarity. <span className="text-gradient">Become exam ready.</span>
               </h1>
               <p className="mt-6 max-w-xl text-lg leading-8 text-muted-foreground">
-                A focused learning platform for live classes, course resources, assignments,
-                announcements, and student progress.
+                Structured Chemistry and Physics courses with live classes, notes, past papers,
+                assignments, tests, and teacher support.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
                 <Link
@@ -126,6 +135,30 @@ function HomePage() {
             </div>
           </div>
         </section>
+        <section className="border-y border-border bg-card px-6 py-16">
+          <div className="mx-auto max-w-7xl text-center">
+            <p className="text-sm font-bold uppercase tracking-[.18em] text-primary">
+              What do you study?
+            </p>
+            <h2 className="mt-3 text-4xl font-extrabold">Find courses made for your level.</h2>
+            <div className="mt-8 flex flex-wrap justify-center gap-3">
+              {["O Levels", "IGCSE", "AS / A1", "A2", "A Level"].map((level) => (
+                <button
+                  key={level}
+                  type="button"
+                  onClick={() => setSelectedLevel(selectedLevel === level ? "" : level)}
+                  className={`rounded-2xl border-2 px-5 py-4 font-bold transition ${
+                    selectedLevel === level
+                      ? "border-primary bg-primary text-primary-foreground shadow-elegant"
+                      : "border-border bg-background hover:-translate-y-0.5 hover:border-primary/40"
+                  }`}
+                >
+                  {level}
+                </button>
+              ))}
+            </div>
+          </div>
+        </section>
         <section id="courses" className="scroll-mt-24 px-6 py-20">
           <div className="mx-auto max-w-7xl">
             <p className="text-sm font-bold uppercase tracking-wider text-primary">
@@ -134,13 +167,13 @@ function HomePage() {
             <h2 className="mt-3 text-4xl font-extrabold">Choose your course</h2>
             {loadingCourses ? (
               <p className="mt-8 text-muted-foreground">Loading courses…</p>
-            ) : courses.length === 0 ? (
+            ) : visibleCourses.length === 0 ? (
               <p className="mt-8 rounded-2xl border border-dashed p-8 text-center text-muted-foreground">
-                No courses are available yet.
+                No published courses currently match {selectedLevel || "this selection"}.
               </p>
             ) : (
               <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-                {courses.map((course) => (
+                {visibleCourses.map((course) => (
                   <article key={course.id} className="rounded-2xl border bg-card p-6 shadow-card">
                     <p className="text-xs font-bold uppercase text-primary">{course.subject}</p>
                     <h3 className="mt-1 text-xl font-bold">{course.title}</h3>
