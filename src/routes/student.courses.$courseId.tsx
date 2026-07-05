@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, ExternalLink } from "lucide-react";
+import { ArrowLeft, CheckCircle2, ExternalLink, FileUp, Loader2 } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import { useAuth } from "@/auth/AuthProvider";
 import { DashboardShell } from "@/components/DashboardShell";
@@ -29,6 +29,7 @@ function StudentCourse() {
   const [classes, setClasses] = useState<Item[]>([]);
   const [recordings, setRecordings] = useState<Item[]>([]);
   const [assignments, setAssignments] = useState<Item[]>([]);
+  const [submissions, setSubmissions] = useState<Item[]>([]);
   const [announcements, setAnnouncements] = useState<Item[]>([]);
   const [payment, setPayment] = useState<Item[]>([]);
   const [authorized, setAuthorized] = useState<boolean | null>(null);
@@ -74,6 +75,7 @@ function StudentCourse() {
           .select("*")
           .eq("course_id", courseId)
           .eq("student_id", profile.id),
+        supabase.from("assignment_submissions").select("*").eq("student_id", profile.id),
       ]);
       setCourse(results[0].data as Course);
       setResources((results[1].data as Resource[]) ?? []);
@@ -82,6 +84,7 @@ function StudentCourse() {
       setAssignments((results[4].data as Item[]) ?? []);
       setAnnouncements((results[5].data as Item[]) ?? []);
       setPayment((results[6].data as Item[]) ?? []);
+      setSubmissions((results[7].data as Item[]) ?? []);
       setError(results.find((x) => x.error)?.error?.message ?? "");
     }
     void load();
@@ -184,7 +187,26 @@ function StudentCourse() {
       )}
       {tab === "Live Classes" && <Simple items={classes} empty="No classes scheduled." />}
       {tab === "Recordings" && <Simple items={recordings} empty="No published recordings." />}
-      {tab === "Assignments" && <Simple items={assignments} empty="No published assignments." />}
+      {tab === "Assignments" && (
+        <List empty="No published assignments.">
+          {assignments.map((assignment) => (
+            <AssignmentCard
+              key={assignment.id}
+              assignment={assignment}
+              profileId={profile!.id}
+              existing={submissions.find(
+                (submission) => submission.assignment_id === assignment.id,
+              )}
+              onSaved={(saved) =>
+                setSubmissions((current) => [
+                  ...current.filter((submission) => submission.assignment_id !== assignment.id),
+                  saved,
+                ])
+              }
+            />
+          ))}
+        </List>
+      )}
       {tab === "Announcements" && <Simple items={announcements} empty="No course announcements." />}
       {tab === "Payments / Access Status" && (
         <div className="rounded-2xl border bg-card p-5">
@@ -197,6 +219,123 @@ function StudentCourse() {
         </div>
       )}
     </DashboardShell>
+  );
+}
+
+function AssignmentCard({
+  assignment,
+  profileId,
+  existing,
+  onSaved,
+}: {
+  assignment: Item;
+  profileId: string;
+  existing?: Item;
+  onSaved: (submission: Item) => void;
+}) {
+  const [file, setFile] = useState<File | null>(null);
+  const [notes, setNotes] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState("");
+
+  async function submit() {
+    if (!supabase || !file) return;
+    setBusy(true);
+    setMessage("");
+    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "-");
+    const path = `${profileId}/${assignment.id}/${Date.now()}-${safeName}`;
+    const upload = await supabase.storage.from("assignment-submissions").upload(path, file);
+    if (upload.error) {
+      setMessage(upload.error.message);
+      setBusy(false);
+      return;
+    }
+    const payload = {
+      assignment_id: assignment.id,
+      student_id: profileId,
+      submission_file_path: path,
+      notes: notes || null,
+      status: "submitted",
+      submitted_at: new Date().toISOString(),
+    };
+    const result = existing
+      ? await supabase
+          .from("assignment_submissions")
+          .update(payload)
+          .eq("id", existing.id)
+          .select()
+          .single()
+      : await supabase.from("assignment_submissions").insert(payload).select().single();
+    if (result.error) {
+      await supabase.storage.from("assignment-submissions").remove([path]);
+      setMessage(result.error.message);
+    } else {
+      onSaved(result.data as Item);
+      setFile(null);
+      setNotes("");
+      setMessage(existing ? "Submission replaced successfully." : "Work submitted successfully.");
+    }
+    setBusy(false);
+  }
+
+  return (
+    <article className="lms-card">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <p className="lms-kicker">Assignment</p>
+          <h3 className="mt-3 text-lg font-extrabold">{assignment.title}</h3>
+          <p className="mt-1 text-sm leading-6 text-muted-foreground">
+            {String(assignment.instructions ?? "Complete the attached course work.")}
+          </p>
+        </div>
+        {existing && (
+          <span className="inline-flex items-center gap-1.5 self-start rounded-full bg-emerald-100 px-3 py-1.5 text-xs font-extrabold text-emerald-700">
+            <CheckCircle2 className="h-3.5 w-3.5" />
+            {String(existing.status ?? "submitted")}
+          </span>
+        )}
+      </div>
+      {existing?.marks != null && (
+        <div className="mt-4 rounded-2xl bg-emerald-50 p-4 text-sm">
+          <p className="font-extrabold text-emerald-800">
+            Marks: {String(existing.marks)}
+            {assignment.max_marks ? ` / ${String(assignment.max_marks)}` : ""}
+          </p>
+          {existing.feedback && (
+            <p className="mt-1 text-emerald-700">{String(existing.feedback)}</p>
+          )}
+        </div>
+      )}
+      <div className="mt-5 grid gap-3 sm:grid-cols-[1fr_1fr_auto]">
+        <label className="lms-field flex cursor-pointer items-center gap-2 overflow-hidden">
+          <FileUp className="h-4 w-4 shrink-0 text-primary" />
+          <span className="truncate">{file?.name || "Choose solution file"}</span>
+          <input
+            type="file"
+            className="sr-only"
+            onChange={(event) => setFile(event.target.files?.[0] ?? null)}
+          />
+        </label>
+        <input
+          value={notes}
+          onChange={(event) => setNotes(event.target.value)}
+          placeholder="Optional note for your teacher"
+          className="lms-field"
+        />
+        <button
+          type="button"
+          disabled={!file || busy}
+          onClick={() => void submit()}
+          className="lms-button"
+        >
+          {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileUp className="h-4 w-4" />}
+          {existing ? "Resubmit" : "Submit work"}
+        </button>
+      </div>
+      {message && (
+        <p className="mt-3 rounded-xl bg-secondary px-4 py-3 text-sm font-medium">{message}</p>
+      )}
+    </article>
   );
 }
 function List({ children, empty }: { children: ReactNode[]; empty: string }) {
