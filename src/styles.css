@@ -147,13 +147,44 @@
 
 @layer components {
   .lms-panel {
-    @apply rounded-2xl border bg-card shadow-card;
+    @apply relative overflow-hidden rounded-3xl border border-white/70 bg-card shadow-card;
+    box-shadow: 0 16px 44px -24px oklch(0.32 0.16 265 / 0.28);
+  }
+  .lms-card {
+    @apply relative overflow-hidden rounded-3xl border border-border/70 bg-card p-5 transition duration-300;
+    box-shadow: 0 12px 38px -25px oklch(0.32 0.16 265 / 0.3);
+  }
+  .lms-card::before {
+    content: "";
+    @apply pointer-events-none absolute inset-x-0 top-0 h-px;
+    background: linear-gradient(90deg, transparent, oklch(0.7 0.15 265 / 0.45), transparent);
+  }
+  .lms-card:hover {
+    transform: translateY(-3px);
+    border-color: oklch(0.55 0.16 265 / 0.35);
+    box-shadow: 0 24px 55px -28px oklch(0.32 0.16 265 / 0.42);
+  }
+  .lms-form {
+    @apply rounded-3xl border border-border/70 bg-card p-5 shadow-card sm:p-6;
+    background-image:
+      radial-gradient(at 100% 0%, oklch(0.55 0.16 265 / 0.08), transparent 32%),
+      radial-gradient(at 0% 100%, oklch(0.78 0.14 78 / 0.07), transparent 28%);
+  }
+  .lms-field {
+    @apply min-h-12 rounded-xl border border-input bg-background/80 px-4 py-3 text-sm outline-none transition;
+  }
+  .lms-field:focus {
+    @apply border-primary ring-4 ring-primary/10;
   }
   .lms-button {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-primary-foreground transition hover:opacity-90 disabled:opacity-50;
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-primary-foreground transition duration-200 hover:-translate-y-0.5 hover:brightness-110 disabled:opacity-50;
+    box-shadow: 0 12px 28px -14px oklch(0.32 0.16 265 / 0.65);
   }
   .lms-button-secondary {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl border bg-card px-4 py-2.5 text-sm font-bold transition hover:bg-secondary;
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border bg-card px-4 py-2.5 text-sm font-bold transition duration-200 hover:-translate-y-0.5 hover:border-primary/30 hover:bg-secondary;
+  }
+  .lms-kicker {
+    @apply inline-flex rounded-full bg-primary/8 px-3 py-1.5 text-[11px] font-extrabold uppercase tracking-[0.16em] text-primary;
   }
 }
 

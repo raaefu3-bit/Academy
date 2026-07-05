@@ -15,17 +15,16 @@ export function PageHeader({
   actions?: ReactNode;
 }) {
   return (
-    <div className="mb-7 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div className="relative mb-8 flex flex-col gap-4 overflow-hidden rounded-3xl border bg-card px-5 py-6 shadow-card sm:flex-row sm:items-end sm:justify-between sm:px-7">
+      <div className="pointer-events-none absolute -right-12 -top-16 h-40 w-40 rounded-full bg-primary/10 blur-3xl" />
       <div>
-        {eyebrow && (
-          <p className="text-xs font-bold uppercase tracking-[.18em] text-primary">{eyebrow}</p>
-        )}
-        <h2 className="mt-1 text-2xl font-extrabold sm:text-3xl">{title}</h2>
+        {eyebrow && <p className="lms-kicker">{eyebrow}</p>}
+        <h2 className="mt-3 text-2xl font-extrabold sm:text-3xl">{title}</h2>
         {description && (
           <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">{description}</p>
         )}
       </div>
-      {actions && <div className="flex flex-wrap gap-2">{actions}</div>}
+      {actions && <div className="relative flex flex-wrap gap-2">{actions}</div>}
     </div>
   );
 }
@@ -42,13 +41,13 @@ export function StatCard({
   note?: string;
 }) {
   return (
-    <article className="rounded-2xl border bg-card p-5 shadow-card">
+    <article className="lms-card group">
       <div className="flex items-start justify-between">
         <div>
           <p className="text-sm font-medium text-muted-foreground">{label}</p>
           <p className="mt-2 text-3xl font-extrabold">{value}</p>
         </div>
-        <span className="grid h-11 w-11 place-items-center rounded-xl bg-primary/8 text-primary">
+        <span className="grid h-12 w-12 place-items-center rounded-2xl bg-primary/8 text-primary transition group-hover:scale-110 group-hover:bg-primary group-hover:text-primary-foreground">
           <Icon className="h-5 w-5" />
         </span>
       </div>
@@ -63,7 +62,7 @@ export function StatusBadge({ value }: { value: string }) {
   return (
     <span
       className={cn(
-        "inline-flex rounded-full px-2.5 py-1 text-[11px] font-bold capitalize",
+        "inline-flex items-center rounded-full border px-3 py-1 text-[11px] font-extrabold capitalize",
         good && "bg-emerald-100 text-emerald-700",
         warning && "bg-amber-100 text-amber-800",
         !good && !warning && "bg-secondary text-muted-foreground",
@@ -86,14 +85,14 @@ export function CourseSwitcher({
   label?: string;
 }) {
   return (
-    <div className="mb-6 rounded-2xl border bg-card p-4 shadow-card">
+    <div className="lms-form mb-6">
       <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground">
         {label}
       </label>
       <select
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="mt-2 w-full rounded-xl border bg-background p-3 font-semibold sm:max-w-lg"
+        className="lms-field mt-2 w-full font-semibold sm:max-w-lg"
       >
         <option value="">Select a course</option>
         {courses.map((course) => (

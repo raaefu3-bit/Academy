@@ -5,6 +5,8 @@ import { DashboardShell } from "@/components/DashboardShell";
 import { adminNav } from "@/components/nav-items";
 import { supabase } from "@/lib/supabase";
 import type { Course } from "@/types/academy";
+import { Clock3, FileCheck2, GraduationCap, Sparkles, Trophy } from "lucide-react";
+import { PageHeader, StatusBadge } from "@/components/lms";
 export const Route = createFileRoute("/admin/tests")({ component: Page });
 type Test = {
   id: string;
@@ -89,20 +91,33 @@ function Page() {
       title="Tests"
       subtitle="Create tests inside assigned courses."
     >
+      <PageHeader
+        eyebrow="Assessment studio"
+        title="Build tests students want to finish"
+        description="Create clear, course-specific assessments with strong timing and marks visibility."
+      />
       {courses.length === 0 ? (
         <p className="rounded-2xl border border-dashed p-8 text-center text-muted-foreground">
           No courses assigned yet. Ask an admin to assign you to a course.
         </p>
       ) : (
-        <form
-          onSubmit={create}
-          className="grid gap-3 rounded-2xl border bg-card p-5 md:grid-cols-2"
-        >
+        <form onSubmit={create} className="lms-form grid gap-4 md:grid-cols-2">
+          <div className="flex items-center gap-3 md:col-span-2">
+            <span className="grid h-12 w-12 place-items-center rounded-2xl bg-cyan-100 text-cyan-700">
+              <GraduationCap className="h-6 w-6" />
+            </span>
+            <div>
+              <h2 className="font-extrabold">Create a course test</h2>
+              <p className="text-sm text-muted-foreground">
+                Set the challenge, duration, and marks.
+              </p>
+            </div>
+          </div>
           <select
             required
             value={courseId}
             onChange={(e) => setCourseId(e.target.value)}
-            className="rounded-xl border p-3"
+            className="lms-field"
           >
             <option value="">Choose course</option>
             {courses.map((c) => (
@@ -116,13 +131,13 @@ function Page() {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Test title"
-            className="rounded-xl border p-3"
+            className="lms-field"
           />
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Description"
-            className="rounded-xl border p-3 md:col-span-2"
+            className="lms-field min-h-24 md:col-span-2"
           />
           <input
             type="number"
@@ -130,7 +145,7 @@ function Page() {
             value={duration}
             onChange={(e) => setDuration(e.target.value)}
             placeholder="Duration minutes"
-            className="rounded-xl border p-3"
+            className="lms-field"
           />
           <input
             type="number"
@@ -138,26 +153,44 @@ function Page() {
             value={marks}
             onChange={(e) => setMarks(e.target.value)}
             placeholder="Total marks"
-            className="rounded-xl border p-3"
+            className="lms-field"
           />
-          <button className="rounded-xl gradient-primary p-3 font-bold text-primary-foreground md:col-span-2">
-            Save test draft
+          <button className="lms-button md:col-span-2">
+            <Sparkles className="h-4 w-4" /> Save test draft
           </button>
         </form>
       )}
       {notice && <p className="my-4 rounded-xl bg-secondary p-3 text-sm">{notice}</p>}
-      <div className="space-y-3">
+      <div className="mt-7 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {items.map((item) => (
-          <article key={item.id} className="rounded-2xl border bg-card p-5">
-            <p className="text-xs font-bold uppercase text-primary">{item.courses.title}</p>
-            <div className="flex justify-between">
-              <h2 className="font-bold">{item.title}</h2>
-              <span className="text-xs font-bold uppercase">{item.status}</span>
+          <article key={item.id} className="lms-card group">
+            <div className="absolute -right-12 -top-12 h-32 w-32 rounded-full bg-cyan-400/15 blur-2xl" />
+            <div className="flex items-start justify-between">
+              <span className="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br from-cyan-100 to-blue-100 text-blue-700 transition group-hover:rotate-3 group-hover:scale-110">
+                <FileCheck2 className="h-6 w-6" />
+              </span>
+              <StatusBadge value={item.status} />
             </div>
-            <button
-              onClick={() => toggle(item)}
-              className="mt-3 rounded-lg border px-3 py-2 text-sm font-bold"
-            >
+            <p className="mt-5 text-xs font-extrabold uppercase tracking-[.14em] text-primary">
+              {item.courses.title}
+            </p>
+            <h2 className="mt-1 text-lg font-extrabold">{item.title}</h2>
+            {item.description && (
+              <p className="mt-2 line-clamp-2 text-sm leading-6 text-muted-foreground">
+                {item.description}
+              </p>
+            )}
+            <div className="mt-5 grid grid-cols-2 gap-2">
+              <div className="rounded-xl bg-secondary/70 p-3">
+                <Clock3 className="mb-1 h-4 w-4 text-primary" />
+                <p className="text-sm font-extrabold">{item.duration_minutes ?? "—"} min</p>
+              </div>
+              <div className="rounded-xl bg-amber-50 p-3">
+                <Trophy className="mb-1 h-4 w-4 text-amber-600" />
+                <p className="text-sm font-extrabold">{item.total_marks ?? "—"} marks</p>
+              </div>
+            </div>
+            <button onClick={() => toggle(item)} className="lms-button-secondary mt-4 w-full">
               {item.status === "published" ? "Unpublish" : "Publish"}
             </button>
           </article>

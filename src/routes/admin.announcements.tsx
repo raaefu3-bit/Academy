@@ -5,6 +5,8 @@ import { DashboardShell } from "@/components/DashboardShell";
 import { adminNav } from "@/components/nav-items";
 import { supabase } from "@/lib/supabase";
 import type { Course } from "@/types/academy";
+import { Archive, BellRing, Megaphone, Radio, Send } from "lucide-react";
+import { PageHeader, StatusBadge } from "@/components/lms";
 
 export const Route = createFileRoute("/admin/announcements")({ component: Page });
 type Announcement = {
@@ -98,21 +100,32 @@ function Page() {
       title="Announcements"
       subtitle="Publish updates to the right students."
     >
-      <form
-        onSubmit={create}
-        className="grid gap-3 rounded-2xl border bg-card p-5 shadow-card md:grid-cols-2"
-      >
+      <PageHeader
+        eyebrow="Communication centre"
+        title="Keep every course in the loop"
+        description="Create targeted updates, publish urgent notices, and keep students focused without mixing course audiences."
+      />
+      <form onSubmit={create} className="lms-form grid gap-4 md:grid-cols-2">
+        <div className="flex items-center gap-3 md:col-span-2">
+          <span className="grid h-12 w-12 place-items-center rounded-2xl bg-violet-100 text-violet-700">
+            <Megaphone className="h-5 w-5" />
+          </span>
+          <div>
+            <h2 className="font-extrabold">Create an announcement</h2>
+            <p className="text-sm text-muted-foreground">Draft first, then publish when ready.</p>
+          </div>
+        </div>
         <input
           required
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Title"
-          className="rounded-xl border p-3"
+          className="lms-field"
         />
         <select
           value={priority}
           onChange={(e) => setPriority(e.target.value)}
-          className="rounded-xl border p-3"
+          className="lms-field"
         >
           <option>normal</option>
           <option>important</option>
@@ -123,12 +136,12 @@ function Page() {
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder="Message"
-          className="rounded-xl border p-3 md:col-span-2"
+          className="lms-field min-h-28 md:col-span-2"
         />
         <select
           value={audience}
           onChange={(e) => setAudience(e.target.value)}
-          className="rounded-xl border p-3"
+          className="lms-field"
         >
           <option value="course">One course (recommended)</option>
           <option value="all">Show to all enrolled students</option>
@@ -138,7 +151,7 @@ function Page() {
             required
             value={courseId}
             onChange={(e) => setCourseId(e.target.value)}
-            className="rounded-xl border p-3"
+            className="lms-field"
           >
             <option value="">Choose course</option>
             {courses.map((c) => (
@@ -148,38 +161,43 @@ function Page() {
             ))}
           </select>
         )}
-        <label className="flex items-center gap-2 rounded-xl border p-3 text-sm font-semibold">
+        <label className="flex min-h-12 items-center gap-3 rounded-xl border bg-background/70 px-4 text-sm font-semibold">
           <input type="checkbox" checked={notify} onChange={(e) => setNotify(e.target.checked)} />
           Send notification
         </label>
-        <button className="rounded-xl gradient-primary p-3 font-bold text-primary-foreground md:col-span-2">
-          Save draft
+        <button className="lms-button md:col-span-2">
+          <Send className="h-4 w-4" /> Save announcement draft
         </button>
       </form>
       {notice && <p className="my-4 rounded-xl bg-secondary p-3 text-sm">{notice}</p>}
-      <div className="space-y-3">
+      <div className="mt-7 grid gap-4 lg:grid-cols-2">
         {items.map((a) => (
-          <article key={a.id} className="rounded-2xl border bg-card p-5 shadow-card">
-            <div className="flex justify-between">
-              <h2 className="font-bold">{a.title}</h2>
-              <span className="text-xs uppercase">{a.status}</span>
+          <article key={a.id} className="lms-card group min-h-56">
+            <div className="absolute -right-10 -top-10 h-28 w-28 rounded-full bg-violet-500/10 blur-2xl" />
+            <div className="flex items-start justify-between gap-4">
+              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-violet-100 text-violet-700">
+                {a.priority === "urgent" ? (
+                  <BellRing className="h-5 w-5" />
+                ) : (
+                  <Radio className="h-5 w-5" />
+                )}
+              </span>
+              <StatusBadge value={a.status} />
             </div>
-            <p className="mt-2 text-sm text-muted-foreground">{a.message}</p>
+            <h2 className="mt-4 text-lg font-extrabold">{a.title}</h2>
+            <p className="mt-2 line-clamp-3 text-sm leading-6 text-muted-foreground">{a.message}</p>
             <p className="mt-2 text-xs">
               {a.audience_type === "course" ? a.courses?.title : "All students"} · {a.priority}
             </p>
             <div className="mt-4 flex gap-2">
-              <button
-                onClick={() => toggle(a)}
-                className="rounded-lg border px-3 py-2 text-xs font-bold"
-              >
+              <button onClick={() => toggle(a)} className="lms-button-secondary text-xs">
                 {a.status === "published" ? "Unpublish" : "Publish"}
               </button>
               <button
                 onClick={() => archive(a)}
-                className="rounded-lg border px-3 py-2 text-xs text-destructive"
+                className="lms-button-secondary text-xs text-destructive"
               >
-                Archive
+                <Archive className="h-3.5 w-3.5" /> Archive
               </button>
             </div>
           </article>
