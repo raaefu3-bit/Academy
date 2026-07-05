@@ -17,7 +17,6 @@ import type { NavItem } from "./DashboardShell";
 
 export const studentNav: NavItem[] = [
   { to: "/student", label: "Dashboard", icon: <LayoutDashboard className="h-4 w-4" /> },
-  { to: "/student", label: "My Courses", icon: <BookOpen className="h-4 w-4" /> },
   { to: "/live-classes", label: "Live Classes", icon: <Video className="h-4 w-4" /> },
   { to: "/notes", label: "Notes", icon: <FileText className="h-4 w-4" /> },
   { to: "/past-papers", label: "Past Papers", icon: <FileText className="h-4 w-4" /> },
@@ -30,7 +29,6 @@ export const studentNav: NavItem[] = [
 
 export const teacherNav: NavItem[] = [
   { to: "/teacher", label: "Dashboard", icon: <LayoutDashboard className="h-4 w-4" /> },
-  { to: "/teacher", label: "My Courses", icon: <BookOpen className="h-4 w-4" /> },
   { to: "/teacher/live-classes", label: "Live Classes", icon: <Video className="h-4 w-4" /> },
   { to: "/teacher/notes", label: "Resources", icon: <FileText className="h-4 w-4" /> },
   { to: "/teacher/announcements", label: "Announcements", icon: <Megaphone className="h-4 w-4" /> },

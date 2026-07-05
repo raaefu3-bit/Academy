@@ -10,11 +10,7 @@ function StudentLayout() {
   const { profile } = useAuth();
   return (
     <RequireRole allow={["student"]}>
-      {!profile?.academic_level ? (
-        <Navigate to="/onboarding" />
-      ) : (
-        <Outlet />
-      )}
+      {!profile?.academic_level ? <Navigate to="/onboarding" /> : <Outlet />}
     </RequireRole>
   );
 }
